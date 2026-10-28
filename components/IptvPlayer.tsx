@@ -12,39 +12,64 @@ export default function IptvPlayer({src}: Props){
     const videoRef = useRef<HTMLVideoElement>(null);
     const [error,setError] = useState('');
 
-    useEffect(()=>{
+    useEffect(() => {
         const video = videoRef.current;
-        if(!video || !src) return;
 
-        let hls:Hls | undefined
-        setError('');
+        // console.log("[Player] useEffect started", { src });
+        // console.log("[Player] video element exists:", !!video);
 
-        if(video.canPlayType('application/vnd.apple.mpegurl')){
-            video.src = src;
-        } else if(Hls.isSupported()){
-            hls = new Hls()
-            hls.loadSource(src)
-            hls.attachMedia(video)
-
-            hls.on(Hls.Events.ERROR,(_,data)=>{
-                if(data.fatal){
-                    setError('Unable to play this stream.')
-                    hls?.destroy()
-                }
-            })
-        } else {
-            setError("This Browser doesn't support the HLS playback.")
+        if (!video || !src) {
+            console.warn("[Player] Missing video element or stream URL");
+            return;
         }
+
+        let hls: Hls | undefined;
+
+        setError("");
+
+        
+        if (Hls.isSupported()) {
+            // console.log("[Player] Using hls.js for debugging");
+
+            hls = new Hls();
+
+            // hls.on(Hls.Events.MANIFEST_LOADED, (_event, data) => {
+            //     console.log("[Player] Manifest loaded:", data.url);
+            // });
+
+            // hls.on(Hls.Events.FRAG_LOADING, (_event, data) => {
+            //     console.log("[Player] Segment URL:", data.frag.url);
+            // });
+
+            // hls.on(Hls.Events.ERROR, (_event, data) => {
+            //     console.error("[Player] HLS error:", {
+            //     type: data.type,
+            //     details: data.details,
+            //     fatal: data.fatal,
+            //     status: data.response?.code,
+            //     });
+            // });
+
+            hls.loadSource(src);
+            hls.attachMedia(video);
+
+        } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+            console.log("[Player] Using native HLS");
+            video.src = src;
+        } else {
+            setError("HLS playback is not supported.");
+        }
+
 
         return () => {
-            hls?.destroy()
-            video.pause()
-            video.removeAttribute('src')
-            video.load()
-        }
+            console.log("[Player] Cleaning up");
+            hls?.destroy();
+            video.pause();
+            video.removeAttribute("src");
+            video.load();
+        };
 
-
-    },[src]);
+    }, [src]);
 
     return (
         <div className="w-5xl rounded-lg">
@@ -62,3 +87,9 @@ export default function IptvPlayer({src}: Props){
         </div>
     )
 }
+
+
+
+
+
+

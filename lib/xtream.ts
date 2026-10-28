@@ -32,6 +32,5 @@ export async function xtreamRequest({action , categoryId}: Params) {
     if(!response.ok){
         throw new Error(`Xtream API returned ${response.status}`)
     }
-
     return response.json();
 }

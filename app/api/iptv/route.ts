@@ -34,7 +34,7 @@ export async function GET(request : NextRequest){
         
         return NextResponse.json({
             error: 'Unable to load IPTV data',
-            status: 502,
+            status: 502
         })
     }
 }

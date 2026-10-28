@@ -16,15 +16,19 @@ const CategoriesPage = () => {
         async function loadCategories(){
             try {
                 const res = await fetch('/api/iptv?type=categories');
-               
-                if(!res.ok){
-                    throw new Error('Could not load Categories.')
+                
+
+                if (!res.ok) {
+                    throw new Error('Could not load categories.');
                 }
 
                 const data: Category[] = await res.json();
-                setCategories(data);
 
-                if(data.length) setCategoryId(data[0].category_id)
+                if (!Array.isArray(data)) {
+                    throw new Error('Invalid categories response format.');
+                }
+
+                setCategories(data);
 
             } catch (error) {
                 setError('Could not connect to the IPTV service.');
