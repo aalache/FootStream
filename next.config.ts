@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
       new URL('https://cdn-icons-png.flaticon.com/**'),
       new URL('http://103.176.90.118/picons/logos/**'),
       new URL('https://assets.football-logos.cc/logos/**'),
+      new URL('https://iili.io/**'),
     ]
   }
 };
