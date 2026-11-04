@@ -5,14 +5,18 @@ import ChannelCard from "@/components/ChannelCard";
 import { useChannels } from "@/context/ChannelsContext";
 
 const CategoriesPage = () => {
-  const { setChannelsList } = useChannels();
+  const { setChannelsList, setSelectedStream } = useChannels();
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryId, setCategoryId] = useState("");
   const [channels, setChannels] = useState<Channel[]>([]);
+  const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  console.log("selectedChannel", selectedChannel);
+
+  // Fetch categories on component mount
   useEffect(() => {
     async function loadCategories() {
       try {
@@ -38,6 +42,7 @@ const CategoriesPage = () => {
     loadCategories();
   }, []);
 
+  // Fetch channels when categoryId changes
   useEffect(() => {
     if (!categoryId) return;
 
@@ -83,6 +88,14 @@ const CategoriesPage = () => {
     };
   }, [categoryId]);
 
+  // Update the selected stream in the context when a channel is selected
+  useEffect(() => {
+    if (selectedChannel) {
+      setSelectedStream(selectedChannel);
+    }
+    console.log("Selected Stream updated in context:", selectedChannel);
+  }, [selectedChannel]);
+
   return (
     <main className="relative h-screen overflow-y-scroll scrollbar-none px-12 w-full grid grid-cols-10">
       {/* Categories Sidebar */}
@@ -120,10 +133,9 @@ const CategoriesPage = () => {
               {channels.map((channel) => (
                 <ChannelCard
                   key={channel.stream_id}
-                  stream_id={channel.stream_id}
-                  name={channel.name}
-                  stream_icon={String(channel.stream_icon)}
-                  category_id={categoryId}
+                  channel={channel}
+                  selectedChannel={selectedChannel}
+                  setSelectedChannel={setSelectedChannel}
                 />
               ))}
             </div>

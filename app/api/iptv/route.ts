@@ -10,9 +10,6 @@ export async function GET(request: NextRequest) {
 
     if (type === "categories") {
       const data = await xtreamRequest({ action: "get_live_categories" });
-      categoriesData.length = 0; // Clear the array
-      categoriesData.push(...data); // Store the categories data in the global variable
-      console.log("categoriesData", categoriesData);
       return NextResponse.json(data);
     }
 
